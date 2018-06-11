@@ -2,6 +2,9 @@
 ** BLOCKCHAIN CORE
 */
 
+const SHA256 = require('sha256');
+
+
 class Blockchain {
 
 /* Constructor Function */
@@ -12,7 +15,7 @@ class Blockchain {
 
 /* Class Methods */
     /* Method: Create a new block with transactions and push it to the chain */
-    createNewBlock(nonce, previousBlockHash, hash) {
+    createNewBlock(nonce, prevBlockHash, curBlockHash) {
         
         /* New block object */
         const newBlock = {
@@ -20,8 +23,8 @@ class Blockchain {
             timestamp: Date.now(),
             transactions: this.pendingTransactions,
             nonce: nonce,
-            hash: hash,
-            previousBlockHash: previousBlockHash
+            curBlockHash: curBlockHash,
+            previousBlockHash: prevBlockHash
         };
 
         /* Create empty transaction list */
@@ -52,6 +55,18 @@ class Blockchain {
 
         /* Return the index of the new block */
         return this.getLastBlock()['index'] + 1;
+    }
+
+    /* Method: Hash the given block using SHA256 hashing algorithm */
+    hashBlock(prevBlockHash, curBlockData, nonce) {
+
+        /* Convert previous block hash, current block data, and nonce into one string */
+        const dataAsString = prevBlockHash + nonce.toString() + JSON.stringify(curBlockData);
+
+        /* Has the string */
+        const hash = SHA256(dataAsString);
+
+        return hash;
     }
 
 }
